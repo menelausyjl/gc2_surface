@@ -26,7 +26,6 @@ namespace yjl {
         inline Type* ptr() { return f; }
     };
 
-
     typedef CGAL::Triangulation_vertex_base_with_info_2<VertexInfo, Kernel> VertexBaseT;
     typedef CGAL::Triangulation_face_base_with_info_2<FaceInfo, Kernel> FaceBaseT;
     typedef CGAL::Triangulation_data_structure_2<VertexBaseT> TriangulationDataStructure;
@@ -36,6 +35,13 @@ namespace yjl {
     typedef Triangulation::Face_handle    Face_handle;
     typedef Triangulation::Vertex_handle  Vertex_handle;
     typedef Triangulation::Locate_type    Locate_type;
+    using Line_face_circulator = Triangulation::Line_face_circulator;
+
+    
+    struct Camera {
+        Point origin;
+        std::vector<Vertex_handle> visible_points;
+    };
 }
 
 #endif //GCS_GRAPH_H

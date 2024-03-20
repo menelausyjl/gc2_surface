@@ -3,3 +3,4 @@
 /cmake-build-*
 /build/
 **/.DS_Dtore
+/vs-build
