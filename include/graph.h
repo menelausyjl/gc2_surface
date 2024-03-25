@@ -19,28 +19,38 @@ namespace yjl {
 
     struct FaceInfo {
         typedef CapacityT Type;
-        Type f[3]; // edges' weight from the face outwards
-        Type s; // face's weight towards s-source
-        Type t; // face's weight towards t-sink
+        Type f[3] {}; // edges' weight from the face outwards
+        Type s {}; // face's weight towards s-source
+        Type t {}; // face's weight towards t-sink
         inline const Type* ptr() const { return f; }
         inline Type* ptr() { return f; }
     };
 
     typedef CGAL::Triangulation_vertex_base_with_info_2<VertexInfo, Kernel> VertexBaseT;
     typedef CGAL::Triangulation_face_base_with_info_2<FaceInfo, Kernel> FaceBaseT;
-    typedef CGAL::Triangulation_data_structure_2<VertexBaseT> TriangulationDataStructure;
+    typedef CGAL::Triangulation_data_structure_2<VertexBaseT, FaceBaseT> TriangulationDataStructure;
 
     using Triangulation = CGAL::Delaunay_triangulation_2<Kernel, TriangulationDataStructure>;
 
     typedef Triangulation::Face_handle    Face_handle;
     typedef Triangulation::Vertex_handle  Vertex_handle;
     typedef Triangulation::Locate_type    Locate_type;
+    typedef Triangulation::Edge             Edge;
     using Line_face_circulator = Triangulation::Line_face_circulator;
+
+    inline Edge getCommonEdge(Face_handle f1, Face_handle f2) {
+        if (!f1->has_neighbor(f2) || f2->has_neighbor(f1)) {
+            return {};
+        }
+        return {f1, f1->index(f2)};
+    }
 
     
     struct Camera {
         Point origin;
         std::vector<Vertex_handle> visible_points;
+
+        explicit Camera(const Point& o) : origin(o) {}
     };
 }
 
