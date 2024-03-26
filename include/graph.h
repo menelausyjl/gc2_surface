@@ -45,6 +45,11 @@ namespace yjl {
         return {f1, f1->index(f2)};
     }
 
+    inline FT computePlaneSphereAngle(Face_handle fh, int i) {
+        // TODO: implement this
+        return {};
+    }
+
     
     struct Camera {
         Point origin;

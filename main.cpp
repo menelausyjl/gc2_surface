@@ -1,6 +1,7 @@
 #include <iostream>
 #include "scene.h"
 #include <CGAL/point_generators_2.h>
+#include <CGAL/draw_linear_cell_complex.h>
 using namespace yjl;
 
 void generateTestCase(yjl::Scene& scene) {
