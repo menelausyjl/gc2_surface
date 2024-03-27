@@ -1,7 +1,7 @@
 #include <iostream>
 #include "scene.h"
 #include <CGAL/point_generators_2.h>
-#include <CGAL/draw_linear_cell_complex.h>
+#include "drawing.h"
 using namespace yjl;
 
 void generateTestCase(yjl::Scene& scene) {
@@ -40,11 +40,9 @@ void generateTestCase(yjl::Scene& scene) {
     scene.m_graph->insert(pt2s.begin(), pt2s.end());
 
     CGAL::Random& rnd = CGAL::get_default_random();
-    for (auto vit = scene.m_graph->finite_vertices_begin();
-         vit != scene.m_graph->finite_vertices_end();
-         ++vit) {
+    for (Vertex_handle vit : scene.m_graph->finite_vertex_handles()) {
         auto& vertex_info = vit->info();
-        auto& point = vit->point();
+        const Point& point = vit->point();
         for (ViewIdx j = 0; j < scene.m_cameras.size(); ++j) {
             Camera& camera = scene.m_cameras[j];
             FT dist = CGAL::squared_distance(point, camera.origin);
@@ -59,11 +57,15 @@ void generateTestCase(yjl::Scene& scene) {
 }
 
 int main() {
-    std::cout << "Hello, World!" << std::endl;
-    return 0;
 
     yjl::Scene scene;
     generateTestCase(scene);
+    std::cout << 1 << std::endl;
+    scene.build();
+    std::cout << 2 << std::endl;
+    scene.computeMaxFlow();
+    std::cout << 3 << std::endl;
+    yjl::drawWithDomain(*scene.m_graph);
 
-    
+    return 0;
 }

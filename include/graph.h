@@ -6,7 +6,10 @@
 #define GCS_GRAPH_H
 
 #include "types.h"
+#include "domain_face_base_with_info.h"
 #include <CGAL/Delaunay_triangulation_2.h>
+//#include <CGAL/Constrained_Delaunay_triangulation_2.h>
+//#include <CGAL/Constrained_triangulation_2.h>
 #include <CGAL/Triangulation_vertex_base_with_info_2.h>
 #include <CGAL/Triangulation_face_base_with_info_2.h>
 
@@ -27,7 +30,7 @@ namespace yjl {
     };
 
     typedef CGAL::Triangulation_vertex_base_with_info_2<VertexInfo, Kernel> VertexBaseT;
-    typedef CGAL::Triangulation_face_base_with_info_2<FaceInfo, Kernel> FaceBaseT;
+    typedef CGAL::Triangulation_face_base_with_domain_and_info_2<FaceInfo, Kernel> FaceBaseT;
     typedef CGAL::Triangulation_data_structure_2<VertexBaseT, FaceBaseT> TriangulationDataStructure;
 
     using Triangulation = CGAL::Delaunay_triangulation_2<Kernel, TriangulationDataStructure>;
@@ -47,6 +50,7 @@ namespace yjl {
 
     inline FT computePlaneSphereAngle(Face_handle fh, int i) {
         // TODO: implement this
+
         return {};
     }
 
