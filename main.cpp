@@ -1,6 +1,9 @@
 #include <iostream>
 #include "scene.h"
 #include <CGAL/point_generators_2.h>
+#ifdef WIN32
+#include <corecrt_math_defines.h>
+#endif
 #include "drawing.h"
 using namespace yjl;
 

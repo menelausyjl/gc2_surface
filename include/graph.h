@@ -42,7 +42,7 @@ namespace yjl {
     using Line_face_circulator = Triangulation::Line_face_circulator;
 
     inline Edge getCommonEdge(Face_handle f1, Face_handle f2) {
-        if (!f1->has_neighbor(f2) || f2->has_neighbor(f1)) {
+        if (!f1->has_neighbor(f2) || !f2->has_neighbor(f1)) {
             return {};
         }
         return {f1, f1->index(f2)};
