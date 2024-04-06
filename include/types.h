@@ -15,6 +15,7 @@ namespace yjl {
     using Point = Kernel::Point_2;
     using Segment = Kernel::Segment_2;
     using Line = Kernel::Line_2;
+    using Ray = Kernel::Ray_2;
     using Triangle = Kernel::Triangle_2;
     using RT = Kernel::RT;
     using FT = Kernel::FT;

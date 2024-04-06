@@ -7,7 +7,7 @@ using namespace yjl;
 void generateTestCase(yjl::Scene& scene) {
     std::vector<Point> pt2s;
 
-    std::size_t n_points = 100;
+    std::size_t n_points = 4000;
     std::size_t n_views = 10;
 
     scene.m_cameras.reserve(n_views);
@@ -28,11 +28,6 @@ void generateTestCase(yjl::Scene& scene) {
 
     Point_generator pg{radius_points};
 
-//    CGAL::random_convex_set_2(
-//            500,
-//            std::back_inserter(pt2s),
-//            Point_generator( 0.5));
-
     std::copy_n(pg, n_points, std::back_inserter(pt2s));
 
     CGAL::perturb_points_2(pt2s.begin(), pt2s.end(), 0.25);
@@ -46,11 +41,51 @@ void generateTestCase(yjl::Scene& scene) {
         for (ViewIdx j = 0; j < scene.m_cameras.size(); ++j) {
             Camera& camera = scene.m_cameras[j];
             FT dist = CGAL::squared_distance(point, camera.origin);
-            if (dist > dist_thresh) {
-                if (rnd.get_double() < 0.8) {
-                    vertex_info[j] += (CapacityT)1;
-                    camera.visible_points.emplace_back(vit);
-                }
+            if (dist > dist_thresh && rnd.get_double() < 0.8)
+            {
+                vertex_info[j] += (CapacityT)1;
+                camera.visible_points.emplace_back(vit);
+            }
+        }
+    }
+}
+
+void generateTestCase2(yjl::Scene& scene, CapacityT k_sigma) {
+    std::vector<Point> pt2s;
+
+    std::size_t n_points = 2000;
+    std::size_t n_views = 30;
+
+    scene.m_cameras.reserve(n_views);
+//    CGAL::Random_points_on_segment_2 pg_cam{Point{-2.5, 4}, Point{2.5, 4}};
+    CGAL::Random_points_in_triangle_2 pg_cam{Point{-2.5, 4}, Point{2.5, 4}, Point{0, 2}};
+    for (std::size_t i = 0; i < n_views; ++i) {
+        scene.m_cameras.emplace_back(*(++pg_cam));
+    }
+//    std::copy_n(pg_cam, n_views, std::back_inserter());
+//    scene.m_cameras.emplace_back(Point{RT(0), RT(4)});
+//    scene.m_cameras.emplace_back(Point{RT(-1), RT(4)});
+//    scene.m_cameras.emplace_back(Point{RT(1), RT(4)});
+
+    CGAL::Random_points_on_segment_2 pg{Point{-2, 0}, Point{2, 0}};
+
+    std::copy_n(pg, n_points, std::back_inserter(pt2s));
+
+    CGAL::perturb_points_2(pt2s.begin(), pt2s.end(), k_sigma);
+
+    scene.m_graph->insert(pt2s.begin(), pt2s.end());
+
+    CGAL::Random& rnd = CGAL::get_default_random();
+    for (Vertex_handle vit : scene.m_graph->finite_vertex_handles()) {
+        auto& vertex_info = vit->info();
+        const Point& point = vit->point();
+        for (ViewIdx j = 0; j < scene.m_cameras.size(); ++j) {
+            Camera& camera = scene.m_cameras[j];
+            FT dist = CGAL::squared_distance(point, camera.origin);
+//            if (dist > dist_thresh && rnd.get_double() < 0.8)
+            {
+                vertex_info[j] += (CapacityT)1;
+                camera.visible_points.emplace_back(vit);
             }
         }
     }
@@ -58,13 +93,14 @@ void generateTestCase(yjl::Scene& scene) {
 
 int main() {
 
+    CapacityT k_sigma = 0.3;
     yjl::Scene scene;
-    generateTestCase(scene);
-    std::cout << 1 << std::endl;
-    scene.build();
-    std::cout << 2 << std::endl;
+    generateTestCase2(scene, k_sigma);
+    std::cout << "Graph generated" << std::endl;
+    scene.build(k_sigma);
+    std::cout << "Cost graph built" << std::endl;
     scene.computeMaxFlow();
-    std::cout << 3 << std::endl;
+    std::cout << "Max flow computed" << std::endl;
     yjl::drawWithDomain(*scene.m_graph);
 
     return 0;

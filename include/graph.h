@@ -50,8 +50,38 @@ namespace yjl {
 
     inline FT computePlaneSphereAngle(Face_handle fh, int i) {
         // TODO: implement this
+        Point o = CGAL::circumcenter(fh->vertex(0)->point(),
+                                     fh->vertex(1)->point(),
+                                     fh->vertex(2)->point());
 
-        return {};
+        FT l_sqr = CGAL::squared_distance(fh->vertex(CGAL::Triangulation_cw_ccw_2::cw(i))->point(),
+                                          fh->vertex(CGAL::Triangulation_cw_ccw_2::ccw(i))->point());
+        FT r_sqr = CGAL::squared_distance(o, fh->vertex(0)->point());
+
+        CGAL::Angle angle = CGAL::angle(fh->vertex(CGAL::Triangulation_cw_ccw_2::cw(i))->point(),
+                                        fh->vertex(i)->point(),
+                                        fh->vertex(CGAL::Triangulation_cw_ccw_2::ccw(i))->point());
+
+        FT sin_sqr = (FT)0.25 * l_sqr / r_sqr;
+//        std::cout << sin_sqr << std::endl;
+        FT cos_sqr = (FT)1 - sin_sqr;
+        FT cos_val = CGAL::approximate_sqrt(cos_sqr);
+        return angle == CGAL::OBTUSE ? -cos_val : cos_val;
+    }
+
+    inline Point rayEdgeIntersect(const Ray& ray, const Segment& segment) {
+        const auto result = CGAL::intersection(ray, segment);
+        if (result) {
+            if (const Segment* s = boost::get<Segment>(&*result)) {
+                std::cerr << "Collinear case, returning midpoint of segment" << std::endl;
+                return CGAL::midpoint(s->source(), s->target());
+            } else {
+                const Point* p = boost::get<Point>(&*result);
+                return *p;
+            }
+        }
+        std::cerr << "Non intersecting case" << std::endl;
+        return CGAL::ORIGIN;
     }
 
     
@@ -60,6 +90,11 @@ namespace yjl {
         std::vector<Vertex_handle> visible_points;
 
         explicit Camera(const Point& o) : origin(o) {}
+
+        Camera& operator=(const Point& o) {
+            origin = o;
+            return *this;
+        }
     };
 }
 

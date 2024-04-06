@@ -28,9 +28,12 @@ namespace yjl {
         static CGAL::IO::Color run(const T2&,
                                    const typename T2::Finite_faces_iterator fh)
         {
-            CGAL::Random random((unsigned int)(std::size_t)(&*fh));
-            static CGAL::IO::Color c_out = get_random_color(random);
-            static CGAL::IO::Color c_in = get_random_color(random);
+
+            static CGAL::IO::Color c_out{0, 0, 150};
+            static CGAL::IO::Color c_in{200, 0, 0};
+//            static CGAL::Random random((unsigned int)(std::size_t)(&*fh));
+//            static CGAL::IO::Color c_out = get_random_color(random);
+//            static CGAL::IO::Color c_in = get_random_color(random);
             return fh->is_in_domain() ? c_in : c_out;
         }
     };
